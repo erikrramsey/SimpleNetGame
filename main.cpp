@@ -43,16 +43,18 @@ int main(int argc, char** argv) {
 void mainLoop() {
 	int inputs[2] = { 0 };
 	int disconnect_flags;
-
-	char i = 'a';
-	while (i != 'q') {
+	int cms;
+	std::cout << "Listening on port: " << localPort << std::endl;
+	while (true) {
+		cms = timeGetTime();
 		int input = rand();
 		result = ggpo_add_local_input(ggpo, player_handles[0], &input, sizeof(input));
-		if (result) std::cout << "Error adding local ggpo input" << std::endl;
 		result = ggpo_synchronize_input(ggpo, (void*)inputs, sizeof(int) * 2, &disconnect_flags);
-		if (result) std::cout << "Error synchronizing ggpo session" << std::endl;
+
+		ggpo_advance_frame(ggpo);
 		ggpo_idle(ggpo, 100);
-		i = std::cin.get();
+		Sleep(16 - (timeGetTime() - cms));
+		double fps = 1000.0 / (timeGetTime() - cms);
 	}
 }
 
@@ -113,20 +115,28 @@ bool on_event_cb(GGPOEvent* info) {
 	int progress;
 	switch (info->code) {
 	case GGPO_EVENTCODE_CONNECTED_TO_PEER:
+		std::cout << "Connected" << std::endl;
 		break;
 	case GGPO_EVENTCODE_SYNCHRONIZING_WITH_PEER:
+		std::cout << "Synchronizing" << std::endl;
 		break;
 	case GGPO_EVENTCODE_SYNCHRONIZED_WITH_PEER:
+		std::cout << "Synchronized" << std::endl;
 		break;
 	case GGPO_EVENTCODE_RUNNING:
+		std::cout << "Running" << std::endl;
 		break;
 	case GGPO_EVENTCODE_CONNECTION_INTERRUPTED:
+		std::cout << "Connection interrupted" << std::endl;
 		break;
 	case GGPO_EVENTCODE_CONNECTION_RESUMED:
+		std::cout << "Connection resumed" << std::endl;
 		break;
 	case GGPO_EVENTCODE_DISCONNECTED_FROM_PEER:
+		std::cout << "Disconnected" << std::endl;
 		break;
 	case GGPO_EVENTCODE_TIMESYNC:
+		std::cout << "Timesynce" << std::endl;
 		break;
 	}
 	return true;
