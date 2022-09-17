@@ -11,10 +11,16 @@ GGPOPlayerHandle player_handles[2];
 
 int localPort;
 int remotePort;
+char ip[20];
 
 void startGGPOSession();
 void endGGPOSession();
 void mainLoop();
+
+struct GameState {
+	int position1;
+	int position2;
+} gameState;
 
 GGPOSessionCallbacks cb;
 bool begin_game_cb(const char* game);
@@ -33,6 +39,7 @@ int main(int argc, char** argv) {
 
 	localPort = atoi(argv[1]);
 	remotePort = atoi(argv[2]);
+	strcpy(ip, argv[3]);
 
 	startGGPOSession();
 	mainLoop();
@@ -45,16 +52,25 @@ void mainLoop() {
 	int disconnect_flags;
 	int cms;
 	std::cout << "Listening on port: " << localPort << std::endl;
+	int i = 0;
 	while (true) {
 		cms = timeGetTime();
-		int input = rand();
+		int input = 0;
+		if (i % 10 == 0)
+			input = rand();
 		result = ggpo_add_local_input(ggpo, player_handles[0], &input, sizeof(input));
-		result = ggpo_synchronize_input(ggpo, (void*)inputs, sizeof(int) * 2, &disconnect_flags);
-
-		ggpo_advance_frame(ggpo);
+		if (!result) {
+			result = ggpo_synchronize_input(ggpo, (void*)inputs, sizeof(int) * 2, &disconnect_flags);
+			if (!result) {
+				std::cout << inputs[0] << ' ' << inputs[1] << std::endl;
+				ggpo_advance_frame(ggpo);
+			}
+		}
+		
 		ggpo_idle(ggpo, 100);
-		Sleep(16 - (timeGetTime() - cms));
+		Sleep(20);
 		double fps = 1000.0 / (timeGetTime() - cms);
+		i++;
 	}
 }
 
@@ -76,7 +92,7 @@ void startGGPOSession() {
 	p2.size = sizeof(p2);
 	p2.type = GGPO_PLAYERTYPE_REMOTE;
 	p2.player_num = 2;
-	strcpy(p2.u.remote.ip_address, "127.0.0.1");
+	strcpy(p2.u.remote.ip_address, ip);
 	p2.u.remote.port = remotePort;
 
 	result = ggpo_add_player(ggpo, &p1, &player_handles[0]);
@@ -93,22 +109,33 @@ void endGGPOSession() {
 	std::cout << "Session closed" << std::endl;
 }
 bool begin_game_cb(const char* game) {
-	return false;
+	return true;
 }
 
 bool advance_frame_cb(int flags) {
-	return false;
+	int inputs[2] = { 0 };
+	int disconnect_flags;
+	ggpo_synchronize_input(ggpo, (void*)inputs, sizeof(int) * 2, &disconnect_flags);
+	ggpo_advance_frame(ggpo);
+
+	return true;
 }
 
+
 bool load_game_state_cb(unsigned char* buffer, int length) {
-	return false;
+	memcpy(&gameState, buffer, length);
+	return true;
 }
 
 bool save_game_state_cb(unsigned char** buffer, int* length, int* checksum, int frame) {
-	return false;
+	*length = sizeof(gameState);
+	*buffer = new unsigned char[*length];
+	memcpy(*buffer, &gameState, *length);
+	return true;
 }
 
 void free_buffer_cb(void* buffer) {
+	delete buffer;
 }
 
 bool on_event_cb(GGPOEvent* info) {
