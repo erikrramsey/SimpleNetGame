@@ -3,8 +3,8 @@
 namespace sng {
 
 struct GameState {
-	int position1;
-	int position2;
+	const static int MAX_PLAYERS = 4;
+	int positions[MAX_PLAYERS];
 };
 
 }

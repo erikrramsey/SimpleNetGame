@@ -13,8 +13,10 @@ Application::~Application() {
 void Application::init(int argc, char** argv) {
 	if (!glfwInit()) throw std::exception("Problem initializing GLFW!");
 	
-	m_window = glfwCreateWindow(640, 480, "SimpleNetGame.exe", nullptr, nullptr);
+	m_window = glfwCreateWindow(1280, 720, "SimpleNetGame.exe", nullptr, nullptr);
 	if (!m_window) throw std::exception("Problem creating GLFW window!");
+
+	glfwSetFramebufferSizeCallback(m_window, RendererOpenGL::resizeCallback);
 
 	m_gameplay = new GameplayManager();
 	m_input = new Input();
@@ -26,7 +28,7 @@ void Application::init(int argc, char** argv) {
 		m_session->add_player(argv[i + 1], atoi(argv[i]));
 	}
 
-
+	std::cout << "Starting session" << std::endl;
 	m_session->start_session();
 }
 
