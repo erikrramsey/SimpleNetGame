@@ -13,7 +13,7 @@ Application::~Application() {
 void Application::init(int argc, char** argv) {
 	if (!glfwInit()) throw std::exception("Problem initializing GLFW!");
 	
-	m_window = glfwCreateWindow(1280, 720, "SimpleNetGame.exe", nullptr, nullptr);
+	m_window = glfwCreateWindow(640, 480, "SimpleNetGame.exe", nullptr, nullptr);
 	if (!m_window) throw std::exception("Problem creating GLFW window!");
 
 	glfwSetFramebufferSizeCallback(m_window, RendererOpenGL::resizeCallback);
@@ -34,9 +34,14 @@ void Application::init(int argc, char** argv) {
 
 void Application::updateLoop() {
 	while (!glfwWindowShouldClose(m_window)) {
-		m_renderer->draw();
+		m_renderer->begin();
+
 		m_input->update();
 		m_session->update(m_input->getInputs());
+		auto gs = m_gameplay->getGameState();
+		m_renderer->drawQuad(gs.positions[0] / 100.0f, gs.positions[1] / 100.0f);
+
+		m_renderer->end();
 		glfwSwapBuffers(m_window);
 		glfwPollEvents();
 	}

@@ -43,6 +43,7 @@ RendererOpenGL::RendererOpenGL(GLFWwindow* window) {
         std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
     }
 
+
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
@@ -57,21 +58,34 @@ RendererOpenGL::RendererOpenGL(GLFWwindow* window) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     glBindVertexArray(0);
+    
+    transLoc = glGetUniformLocation(shaderProgram, "transform");
 
 	glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
 }
 
-void RendererOpenGL::draw() {
-	glClear(GL_COLOR_BUFFER_BIT);
+void RendererOpenGL::begin() {
+    glClear(GL_COLOR_BUFFER_BIT);
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
+    
+}
+
+void RendererOpenGL::drawQuad(float x, float y) {
+    auto transform = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, 0.0f));
+    glUniformMatrix4fv(transLoc, 1, false, glm::value_ptr(transform));
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+}
+
+void RendererOpenGL::end() {
+    glUseProgram(0);
+    glBindVertexArray(0);
 }
 
 void RendererOpenGL::resizeCallback(GLFWwindow* window, int width, int height) {

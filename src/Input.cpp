@@ -7,12 +7,9 @@ void Input::init(GLFWwindow* window) {
 }
 
 void Input::update() {
-	if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS) {
-		m_inputs = 1;
-	}
-	else {
-		m_inputs = 0;
-	}
+	m_inputs = 0;
+	if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)	m_inputs = 1;
+	if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)	m_inputs = -1;
 }
 
 int Input::getInputs() {

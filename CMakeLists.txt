@@ -13,6 +13,7 @@ target_include_directories(SimpleNetGame PUBLIC ${CMAKE_SOURCE_DIR}/src)
 target_include_directories(SimpleNetGame PUBLIC ${vend}/GGPO/include)
 target_include_directories(SimpleNetGame PUBLIC ${vend}/GLFW/include)
 target_include_directories(SimpleNetGame PUBLIC ${vend}/glew-2.1.0/include)
+target_include_directories(SimpleNetGame PUBLIC ${vend}/glm)
 
 set(ggpo_lib ${vend}/GGPO/lib/GGPO.lib)
 set(glfw_lib ${vend}/GLFW/lib/glfw3.lib)
