@@ -66,6 +66,7 @@ RendererOpenGL::RendererOpenGL(GLFWwindow* window) {
     glBindVertexArray(0);
     
     transLoc = glGetUniformLocation(shaderProgram, "transform");
+    projLoc = glGetUniformLocation(shaderProgram, "projection");
 
 	glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
 }
@@ -78,8 +79,10 @@ void RendererOpenGL::begin() {
 }
 
 void RendererOpenGL::drawQuad(float x, float y) {
+    glm::mat4 ortho = glm::ortho(0.0f, 640.0f, 0.0f, 480.0f, -1.0f, 1.0f);
     auto transform = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, 0.0f));
     glUniformMatrix4fv(transLoc, 1, false, glm::value_ptr(transform));
+    glUniformMatrix4fv(projLoc, 1, false, glm::value_ptr(ortho));
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 

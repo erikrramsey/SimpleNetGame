@@ -10,10 +10,10 @@
 #include "glm/gtc/type_ptr.hpp"
 
 const float vertices[] = {
-		 1.0f,  1.0f, 
-		 1.0f,  0.0f, 
+		 10.0f,  10.0f, 
+		 10.0f,  0.0f, 
 		 0.0f,  0.0f, 
-		 0.0f,  1.0f,
+		 0.0f,  10.0f,
 };
 const unsigned int indices[] = {
 	0, 1, 3,
@@ -35,7 +35,7 @@ private:
 	GLuint shaderProgram;
 
 	GLuint VBO, VAO, EBO;
-	GLuint transLoc;
+	GLuint transLoc, projLoc;
 
 };
 }

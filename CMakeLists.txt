@@ -2,11 +2,11 @@
 # project specific logic here.
 #
 cmake_minimum_required (VERSION 3.8)
-
 project("SimpleNetGame")
+set(CMAKE_BUILD_TYPE "Debug")
 
 # Add source to this project's executable.
-add_executable(SimpleNetGame "src/main.cpp"  "src/Application.cpp"  "src/RendererOpenGL.cpp"  "src/NetworkSessionGGPO.cpp" "src/SessionState.h" "src/GameplayManager.h" "src/GameplayManager.cpp" "src/Input.h" "src/Input.cpp")
+add_executable(SimpleNetGame "src/main.cpp"  "src/Application.cpp"  "src/RendererOpenGL.cpp"  "src/NetworkSessionGGPO.cpp" "src/SessionState.h" "src/GameplayManager.h" "src/GameplayManager.cpp" "src/Input.h" "src/Input.cpp" "src/GameObject.h" "src/BoundingBox.h")
 
 set(vend ${CMAKE_SOURCE_DIR}/vendor)
 target_include_directories(SimpleNetGame PUBLIC ${CMAKE_SOURCE_DIR}/src)

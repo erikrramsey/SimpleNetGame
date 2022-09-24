@@ -39,7 +39,7 @@ void Application::updateLoop() {
 		m_input->update();
 		m_session->update(m_input->getInputs());
 		auto gs = m_gameplay->getGameState();
-		m_renderer->drawQuad(gs.positions[0] / 100.0f, gs.positions[1] / 100.0f);
+		m_renderer->drawQuad(gs.positions[0], gs.positions[1]);
 
 		m_renderer->end();
 		glfwSwapBuffers(m_window);
