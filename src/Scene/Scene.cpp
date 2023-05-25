@@ -1,31 +1,29 @@
 #include "Scene.h"
 
 namespace sng {
-Scene::Scene(int argc, char** argv, Input* input, Renderer* renderer) {
+Scene::Scene(Input* input, Renderer* renderer) {
+	m_init = false;
 	m_input = input;
 	m_renderer = renderer;
 	m_gameplay = new GameplayManager();
-	m_session = new NetworkSessionGGPO(m_gameplay);
-
-	for (auto i = 1; i < argc; i+= 2) {
-		m_session->add_player(argv[i + 1], atoi(argv[i]));
-	}
-
-	std::cout << "Starting session" << std::endl;
-	m_session->start_session();
-
-
-	numPlayers = m_session->getSessionState()->numPlayers;
-
 }
 
 Scene::~Scene() {
 }
 
-void Scene::Init() {
+void Scene::Init(NetworkSessionGGPO* session) {
+	session->SetGameplayManager(m_gameplay);
+	m_session = session;
+	numPlayers = m_session->getSessionState()->numPlayers;
+	m_init = true;
+    penguSprite = SpriteLoader::load("../assets/pengu.jpg");
+	m_session->start_session();
 }
 
 void Scene::update(long long dt) {
+	if (!m_init)
+		return;
+
 	m_input->update();
 	m_session->update(m_input->getInputs());
 	auto& gs = m_gameplay->getGameState();

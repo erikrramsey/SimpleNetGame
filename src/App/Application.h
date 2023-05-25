@@ -7,26 +7,29 @@
 #include "Input.h"
 #include "Scene.h"
 #include "DebugGui.h"
-#include "SteamLobby.h"
 #include "steam/steam_api.h"
+#include "steam/steam_api_common.h"
+#include "SteamLobby.h"
 #include "GLFW/glfw3.h"
 
 namespace sng {
+class DebugGui;
+class Scene;
+
 class Application {
 public:
-	Application();
-	~Application();
+	static void init(int argc, char** argv);
+	static void shutdown();
+	static void updateLoop();
 
-	void init(int argc, char** argv);
-
-	void updateLoop();
+	static Scene& GetCurrentScene() { return *m_scene; };
 private:
-	GLFWwindow* m_window;
-	Renderer* m_renderer;
-	Input* m_input;
-	Scene* m_scene;
-	DebugGui* m_gui;
-	SteamLobby* m_steamLobby;
+	static GLFWwindow* m_window;
+	static Renderer* m_renderer;
+	static Input* m_input;
+	static Scene* m_scene;
+	static DebugGui* m_gui;
+	static SteamLobby* m_steamLobby;
 };
 
 }

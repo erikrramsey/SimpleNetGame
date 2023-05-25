@@ -37,24 +37,67 @@ void DebugGui::update() {
 	if (show_demo_window)
 		ImGui::ShowDemoWindow(&show_demo_window);
 
-	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
-	{
-		static float f = 0.0f;
-		static int counter = 0;
 
-		ImGui::Begin("Debug");                          // Create a window called "Hello, world!" and append into it.
-		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+	ImGui::Begin("Debug");
+	ImGui::Checkbox("Demo Window", &show_demo_window);
 
-		if (ImGui::Button("Create lobby"))
-			m_lobby->CreateLobby(4);
+	if (ImGui::Button("Create lobby"))
+		m_lobby->CreateLobby(4);
 
-		ImGui::End();
+	if (ImGui::Button("Connect")) {
+		m_lobby->SetData("GameStart", "true");
 	}
+
+	static bool shouldPrintMemberData = true;
+	ImGui::Checkbox("Print lobby member data", &shouldPrintMemberData);
+	if (shouldPrintMemberData)
+		PrintMemberData();
+
+	static bool shouldPrintLobbyData = true;
+	ImGui::Checkbox("Print lobby data", &shouldPrintLobbyData);
+	if (shouldPrintLobbyData)
+		PrintLobbyData();
+
+	ImGui::End();
 
 	// Rendering
 	ImGui::Render();
 	int display_w, display_h;
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void DebugGui::PrintLobbyData() {
+	const int bufferSize = 200;
+	char* k_buffer = new char[bufferSize];
+	char* buffer = new char[bufferSize];
+	for (int i = 0; i < SteamMatchmaking()->GetLobbyDataCount(m_lobby->GetId()); i++) {
+		SteamMatchmaking()->GetLobbyDataByIndex(m_lobby->GetId(), i, k_buffer, bufferSize, buffer, bufferSize);
+		ImGui::Text(k_buffer);
+		ImGui::Text(buffer);
+	}
+	delete[] buffer;
+	delete[] k_buffer;
+}
+
+void DebugGui::PrintMemberData() {
+	CSteamID user = SteamUser()->GetSteamID();
+	int num_members = m_lobby->GetNumLobbyMembers();
+	for (int i = 0; i < num_members; i++) {
+		CSteamID id = m_lobby->GetLobbyMemberByIndex(i);
+		const char* name = SteamFriends()->GetFriendPersonaName(id);
+		if (id == user) {
+			ImGui::Text("You are: ");
+			ImGui::SameLine();
+		}
+		ImGui::Text(name);
+		ImGui::Text("IP: ");
+		ImGui::SameLine();
+		ImGui::Text(m_lobby->GetUserData(id, "IP"));
+		ImGui::Text("Local IP: ");
+		ImGui::SameLine();
+		ImGui::Text(m_lobby->GetUserData(id, "LocalIP"));
+		ImGui::Separator();
+	}
 }
 
 }

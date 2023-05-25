@@ -4,6 +4,8 @@
 #include "NetworkSessionGGPO.h"
 #include "GameplayManager.h"
 #include "Input.h"
+#include "SpriteLoader.h"
+#include "Sprite.h"
 
 #include <vector>
 #include <unordered_map>
@@ -11,20 +13,26 @@
 #include <iterator>
 
 namespace sng {
+class NetworkSessionGGPO;
 
 class Scene {
 public:
-	Scene(int argc, char** argv, Input* input, Renderer* m_renderer);
+	Scene(Input* input, Renderer* m_renderer);
 	~Scene();
 
-	void Init();
+	void Init(NetworkSessionGGPO* session);
 	void update(long long dt);
 
 private:
+	// Gameplay has started
+	bool m_init;
+
 	NetworkSession* m_session;
 	GameplayManager* m_gameplay;
 	Input* m_input;
 	Renderer* m_renderer;
+
+    Sprite penguSprite;
 
 	int numPlayers;
 

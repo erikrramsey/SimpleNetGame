@@ -6,6 +6,7 @@
 #include "NetworkSession.h"
 #include "ggponet.h"
 
+#include "Application.h"
 #include "GameState.h"
 #include "SessionState.h"
 #include "GameplayManager.h"
@@ -19,12 +20,13 @@ public:
 	void update(char input) override;
 
 	SessionState* getSessionState() { return &state; }
+	void SetGameplayManager(GameplayManager* gp);
 
-	NetworkSessionGGPO(GameplayManager* manager);
+	NetworkSessionGGPO();
 
 private:
 	static SessionState state;
-	static GameplayManager* gp;
+	static GameplayManager* m_gameplay;
 
 	// Callbacks
 	static bool begin_game_cb(const char* game);

@@ -3,9 +3,9 @@
 namespace sng {
 
 SessionState NetworkSessionGGPO::state;
-GameplayManager* NetworkSessionGGPO::gp;
+GameplayManager* NetworkSessionGGPO::m_gameplay;
 
-NetworkSessionGGPO::NetworkSessionGGPO(GameplayManager* manager) {
+NetworkSessionGGPO::NetworkSessionGGPO() {
 	WSADATA wd = { 0 };
 	WSAStartup(MAKEWORD(2, 2), &wd);
 
@@ -15,8 +15,10 @@ NetworkSessionGGPO::NetworkSessionGGPO(GameplayManager* manager) {
 	state.cb.save_game_state = save_game_state_cb;
 	state.cb.free_buffer = free_buffer_cb;
 	state.cb.on_event = on_event_cb;
+}
 
-	gp = manager;
+void NetworkSessionGGPO::SetGameplayManager(GameplayManager* gp) {
+	m_gameplay = gp;
 }
 
 void NetworkSessionGGPO::add_player(const char* ip, const int port) {
@@ -36,6 +38,7 @@ void NetworkSessionGGPO::add_player(const char* ip, const int port) {
 }
 
 void NetworkSessionGGPO::start_session() {
+	std::cout << "Starting GGPO session" << std::endl;
 	auto result = ggpo_start_session(&state.ggpo, &state.cb, "SimpleNetGame", state.numPlayers, sizeof(char), state.localPort);
 	if (result)	throw std::exception("Failed to start ggpo session");
 	ggpo_set_disconnect_timeout(state.ggpo, 3000);
@@ -59,7 +62,7 @@ void NetworkSessionGGPO::update(char input) {
 	if (GGPO_SUCCEEDED(result)) {
 		result = ggpo_synchronize_input(state.ggpo, (void*)inputs, sizeof(char) * state.MAX_PLAYERS, &disconnect_flags);
 		if (GGPO_SUCCEEDED(result)) {
-			gp->advanceFrame(inputs);
+			m_gameplay->advanceFrame(inputs);
 			ggpo_advance_frame(state.ggpo);
 		}
 	}
@@ -75,7 +78,7 @@ bool NetworkSessionGGPO::advance_frame_cb(int flags) {
 	char inputs[state.MAX_PLAYERS] = { 0 };
 	int disconnect_flags;
 	ggpo_synchronize_input(state.ggpo, (void*)inputs, sizeof(char) * state.MAX_PLAYERS, &disconnect_flags);
-	gp->advanceFrame(inputs);
+	m_gameplay->advanceFrame(inputs);
 	ggpo_advance_frame(state.ggpo);
 
 	return true;
@@ -84,12 +87,12 @@ bool NetworkSessionGGPO::advance_frame_cb(int flags) {
 
 bool NetworkSessionGGPO::load_game_state_cb(unsigned char* buffer, int length) {
 	std::cout << "Rollback occured" << std::endl;
-	memcpy(&gp->getGameState(), buffer, length);
+	memcpy(&m_gameplay->getGameState(), buffer, length);
 	return true;
 }
 
 bool NetworkSessionGGPO::save_game_state_cb(unsigned char** buffer, int* length, int* checksum, int frame) {
-	GameState& gs = gp->getGameState();
+	GameState& gs = m_gameplay->getGameState();
 	*length = sizeof(&gs);
 	*buffer = new unsigned char[*length];
 	memcpy(*buffer, &gs, *length);

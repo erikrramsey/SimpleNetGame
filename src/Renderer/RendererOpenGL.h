@@ -9,11 +9,11 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
-const float vertices[] = {
-		 10.0f,  10.0f, 
-		 10.0f,  0.0f, 
+const float quadVerts[] = {
+		 1.0f,  1.0f, 
+		 1.0f,  0.0f, 
 		 0.0f,  0.0f, 
-		 0.0f,  10.0f,
+		 0.0f,  1.0f,
 };
 const unsigned int indices[] = {
 	0, 1, 3,
