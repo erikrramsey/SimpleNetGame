@@ -91,6 +91,10 @@ void RendererOpenGL::end() {
     glBindVertexArray(0);
 }
 
+void RendererOpenGL::setClearColor(const glm::vec4 &color) {
+    glClearColor(color.x, color.y, color.z, color.w);
+}
+
 void RendererOpenGL::resizeCallback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }

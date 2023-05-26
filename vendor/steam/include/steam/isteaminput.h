@@ -698,7 +698,7 @@ class ISteamInput
 {
 public:
 	
-	// Init and Shutdown must be called when starting/ending use of this interface.
+	// init and Shutdown must be called when starting/ending use of this interface.
 	// if bExplicitlyCallRunFrame is called then you will need to manually call RunFrame
 	// each frame, otherwise Steam Input will updated when SteamAPI_RunCallbacks() is called
 	virtual bool Init( bool bExplicitlyCallRunFrame ) = 0;

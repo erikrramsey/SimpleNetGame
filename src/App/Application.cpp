@@ -17,6 +17,7 @@ void Application::init(int argc, char** argv) {
 
 	glfwSetFramebufferSizeCallback(m_window, RendererOpenGL::resizeCallback);
 
+    /*
 	if (SteamAPI_RestartAppIfNecessary(480)) { // Replace with your App ID
         std::cerr << "Steam requested restart, may need to include app id file in directory." << std::endl;
         return;
@@ -24,13 +25,19 @@ void Application::init(int argc, char** argv) {
 
 	if (!SteamAPI_Init())
 		throw std::exception("Problem initializing Steam");
+     */
 
 	m_input = new Input();
 	m_input->init(m_window);
 	m_renderer = new RendererOpenGL(m_window);
-	m_scene = new Scene(m_input, m_renderer);
-	m_steamLobby = new SteamLobby();
+	//m_scene = new TestScene(m_input, m_renderer);
+    m_scene = new Scene();
+    m_scene->setRenderer(m_renderer);
+    m_scene->init();
+
+	//m_steamLobby = new SteamLobby();
 	m_gui = new DebugGui(m_window, m_steamLobby);
+    m_gui->setScene(m_scene);
 }
 
 void Application::shutdown() {
@@ -43,7 +50,7 @@ void Application::updateLoop() {
 		m_scene->update(1);
 		m_gui->update();
 		glfwSwapBuffers(m_window);
-		SteamAPI_RunCallbacks();
+		//SteamAPI_RunCallbacks();
 	}
 }
 

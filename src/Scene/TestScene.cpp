@@ -1,17 +1,17 @@
-#include "Scene.h"
+#include "TestScene.h"
 
 namespace sng {
-Scene::Scene(Input* input, Renderer* renderer) {
+TestScene::TestScene(Input* input, Renderer* renderer) {
 	m_init = false;
 	m_input = input;
 	m_renderer = renderer;
 	m_gameplay = new GameplayManager();
 }
 
-Scene::~Scene() {
+TestScene::~TestScene() {
 }
 
-void Scene::Init(NetworkSessionGGPO* session) {
+void TestScene::Init(NetworkSessionGGPO* session) {
 	session->SetGameplayManager(m_gameplay);
 	m_session = session;
 	numPlayers = m_session->getSessionState()->numPlayers;
@@ -20,7 +20,8 @@ void Scene::Init(NetworkSessionGGPO* session) {
 	m_session->start_session();
 }
 
-void Scene::update(long long dt) {
+void TestScene::update(long long dt) {
+    /*
 	if (!m_init)
 		return;
 
@@ -35,6 +36,7 @@ void Scene::update(long long dt) {
 	}
 
 	m_renderer->end();
+     */
 }
 
 }

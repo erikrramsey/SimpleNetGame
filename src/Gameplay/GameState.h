@@ -7,15 +7,20 @@
 
 namespace sng {
 
+
+/*
 struct Player {
-	Transform tr;
+    Transform tr;
 	BoundingBox bb;
 	Sprite sp;
 };
+ */
 
 struct GameState {
+    /*
 	const static int MAX_PLAYERS = 4;
 	Player players[MAX_PLAYERS];
+     */
 };
 
 }

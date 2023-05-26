@@ -6,6 +6,7 @@
 #include "Input.h"
 #include "SpriteLoader.h"
 #include "Sprite.h"
+#include "Scene.h"
 
 #include <vector>
 #include <unordered_map>
@@ -15,10 +16,10 @@
 namespace sng {
 class NetworkSessionGGPO;
 
-class Scene {
+class TestScene {
 public:
-	Scene(Input* input, Renderer* m_renderer);
-	~Scene();
+	TestScene(Input* input, Renderer* m_renderer);
+	~TestScene();
 
 	void Init(NetworkSessionGGPO* session);
 	void update(long long dt);
@@ -33,6 +34,7 @@ private:
 	Renderer* m_renderer;
 
     Sprite penguSprite;
+    Scene* m_scene;
 
 	int numPlayers;
 
