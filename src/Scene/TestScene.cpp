@@ -12,11 +12,10 @@ TestScene::~TestScene() {
 }
 
 void TestScene::Init(NetworkSessionGGPO* session) {
-	session->SetGameplayManager(m_gameplay);
+    session->setGameplayManager(m_gameplay);
 	m_session = session;
 	numPlayers = m_session->getSessionState()->numPlayers;
 	m_init = true;
-    penguSprite = SpriteLoader::load("../assets/pengu.jpg");
 	m_session->start_session();
 }
 
@@ -29,13 +28,6 @@ void TestScene::update(long long dt) {
 	m_session->update(m_input->getInputs());
 	auto& gs = m_gameplay->getGameState();
 
-	m_renderer->begin();
-
-	for (int i = 0; i < numPlayers; i++) {
-		m_renderer->drawQuad(gs.players[i].tr.position);
-	}
-
-	m_renderer->end();
      */
 }
 

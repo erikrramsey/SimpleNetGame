@@ -4,7 +4,7 @@
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
-#include <GLFW/glfw3.h>
+#include "GLFW/glfw3.h"
 #include <string>
 #include "Scene.h"
 #include "Lobject.h"
@@ -24,7 +24,7 @@ public:
     void setScene(Scene* scene) { m_scene = scene; }
 	void update();
     void displayLobject(Lobject* obj);
-    void componentWindow(Lobject* m_rendered);
+    void componentWindow();
     void familyComponent();
     void transformComponent();
 private:

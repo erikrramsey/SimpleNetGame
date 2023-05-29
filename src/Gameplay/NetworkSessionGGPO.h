@@ -6,12 +6,12 @@
 #include "NetworkSession.h"
 #include "ggponet.h"
 
-#include "Application.h"
-#include "GameState.h"
 #include "SessionState.h"
 #include "GameplayManager.h"
 
 namespace sng {
+
+class GameplayManager;
 
 class NetworkSessionGGPO : public NetworkSession {
 public:
@@ -20,7 +20,7 @@ public:
 	void update(char input) override;
 
 	SessionState* getSessionState() { return &state; }
-	void SetGameplayManager(GameplayManager* gp);
+	void setGameplayManager(GameplayManager* gp);
 
 	NetworkSessionGGPO();
 

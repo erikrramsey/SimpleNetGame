@@ -4,7 +4,6 @@
 #include "NetworkSessionGGPO.h"
 #include "GameplayManager.h"
 #include "Input.h"
-#include "SpriteLoader.h"
 #include "Sprite.h"
 #include "Scene.h"
 
@@ -33,7 +32,6 @@ private:
 	Input* m_input;
 	Renderer* m_renderer;
 
-    Sprite penguSprite;
     Scene* m_scene;
 
 	int numPlayers;

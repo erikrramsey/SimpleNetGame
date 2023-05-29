@@ -1,4 +1,5 @@
 #include "NetworkSessionGGPO.h"
+#include "Application.h"
 
 namespace sng {
 
@@ -17,7 +18,7 @@ NetworkSessionGGPO::NetworkSessionGGPO() {
 	state.cb.on_event = on_event_cb;
 }
 
-void NetworkSessionGGPO::SetGameplayManager(GameplayManager* gp) {
+void NetworkSessionGGPO::setGameplayManager(GameplayManager* gp) {
 	m_gameplay = gp;
 }
 
@@ -93,7 +94,7 @@ bool NetworkSessionGGPO::load_game_state_cb(unsigned char* buffer, int length) {
 
 bool NetworkSessionGGPO::save_game_state_cb(unsigned char** buffer, int* length, int* checksum, int frame) {
 	GameState& gs = m_gameplay->getGameState();
-	*length = sizeof(&gs);
+	*length = sizeof(gs);
 	*buffer = new unsigned char[*length];
 	memcpy(*buffer, &gs, *length);
 	return true;

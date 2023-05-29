@@ -1,12 +1,16 @@
 #pragma once
 
 #include <exception>
+#include <chrono>
+#include <thread>
 
 #include "RendererOpenGL.h"
 #include "GameplayManager.h"
 #include "Input.h"
 #include "TestScene.h"
 #include "DebugGui.h"
+#include "Clock.h"
+
 #include "steam/steam_api.h"
 #include "steam/steam_api_common.h"
 #include "SteamLobby.h"

@@ -8,8 +8,7 @@ namespace sng {
 
 class Transform : Component {
 public:
-    Transform(Entity self) : Component(self) {
-    }
+    Transform(Entity self) : Component(self) {}
 
     glm::vec2 position = glm::vec2(10.0f, 10.0f);
 };

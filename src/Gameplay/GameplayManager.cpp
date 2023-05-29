@@ -4,9 +4,8 @@ namespace sng {
 GameState& GameplayManager::getGameState() { return m_gameState; }
 
 void GameplayManager::advanceFrame(char inputs[SessionState::MAX_PLAYERS]) {
-    /*
 	for (int i = 0; i < 4; i++) {
-		auto& pos = m_gameState.players[i].tr.position;
+		auto& pos = m_gameState.players[i];
 		switch (inputs[i]) {
 			case 'a':
 				pos.x -= 1;
@@ -23,7 +22,6 @@ void GameplayManager::advanceFrame(char inputs[SessionState::MAX_PLAYERS]) {
 			default: break;
 		}
 	}
-     */
 }
 
 }

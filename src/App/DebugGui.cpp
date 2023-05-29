@@ -43,8 +43,8 @@ void DebugGui::update() {
 	ImGui::Checkbox("Demo Window", &show_demo_window);
 
     sceneView();
-    componentWindow(m_selected);
-    /*
+    componentWindow();
+
 	if (ImGui::Button("Create lobby"))
 		m_lobby->CreateLobby(4);
 
@@ -61,7 +61,6 @@ void DebugGui::update() {
 	ImGui::Checkbox("Print lobby data", &shouldPrintLobbyData);
 	if (shouldPrintLobbyData)
 		PrintLobbyData();
-     */
 
 	ImGui::End();
 
@@ -152,16 +151,20 @@ void DebugGui::displayLobject(Lobject* obj) {
     }
 }
 
-void DebugGui::componentWindow(Lobject* m_rendered) {
-    if (!m_rendered) return;
+void DebugGui::componentWindow() {
+    if (!m_selected) return;
 
     ImGui::Begin("Component Editor");
 
-    ImGui::Text("%d", static_cast<int>(m_rendered->m_entity));
+    ImGui::Text("%d", static_cast<int>(m_selected->m_entity));
     ImGui::SameLine();
     const char* current = "Add Component";
     ImGuiComboFlags flags = ImGuiComboFlags_PopupAlignLeft | ImGuiComboFlags_NoArrowButton;
     if (ImGui::BeginCombo("##Add Component", current, flags)) {
+        if (ImGui::Selectable("Sprite")) {
+            Sprite& sp = m_selected->add_component<Sprite>();
+            m_scene->getRenderer()->loadSprite("../assets/smile.png", sp);
+        }
         ImGui::EndCombo();
     }
 

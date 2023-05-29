@@ -70,7 +70,7 @@ void SteamLobby::CreateNetworkSession() {
 		session->add_player(GetUserData(player, "IP"), std::atoi(GetUserData(player, "Port")));
 	}
 
-    //Application::GetCurrentScene().init(session);
+    Application::GetCurrentScene().startOnlineSession(session);
 }
 
 void SteamLobby::OnMemberJoined(LobbyChatUpdate_t* callback) {

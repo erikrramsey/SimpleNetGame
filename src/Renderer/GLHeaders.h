@@ -6,21 +6,27 @@
 const char* const vertex_shader = R"(
 #version 330 core
 
-layout (location = 0) in vec2 aPos;
+layout (location = 0) in vec4 aPos;
 
-uniform mat4 projection;
+out vec2 TexCoords;
+
 uniform mat4 transform;
+uniform mat4 projection;
 
 void main() {
-	gl_Position = projection * transform *  vec4(aPos, 0.0f, 1.0f);
+    TexCoords = aPos.zw;
+	gl_Position = projection * transform *  vec4(aPos.xy, 0.0f, 1.0f);
 }
 )";
 
 const char* const frag_shader = R"(
 #version 330 core
-out vec4 FragColor;
+in vec2 TexCoords;
+out vec4 color;
+
+uniform sampler2D image;
 
 void main() {
-	FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+    color = texture(image, TexCoords);
 }
 )";

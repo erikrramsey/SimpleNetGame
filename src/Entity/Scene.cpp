@@ -10,10 +10,13 @@ Scene::~Scene() {
 
 void Scene::init() {
 	m_renderer->setClearColor(glm::vec4(1.0f, 0.5f, 1.0f, 1.0f));
+
     m_root = new Lobject(m_registry.create(), this);
     m_root->set_name("root");
     m_root->add_component<Transform>();
     m_root->add_component<Family>();
+
+    m_session = nullptr;
 }
 
 void Scene::clear() {
@@ -23,13 +26,45 @@ void Scene::clear() {
     m_objects.clear();
 }
 
+void Scene::startOnlineSession(NetworkSessionGGPO *session) {
+    if (session->getSessionState()->numPlayers < 2) {
+        std::cout << "Session has only one player, not initializing ggpo" << std::endl;
+    } else {
+        m_manager = new GameplayManager();
+        m_numPlayers = session->getSessionState()->numPlayers;
+        for (int i = 0; i < m_numPlayers; i++) {
+            auto obj = create_Lobject();
+            obj->add_component<Player>();
+            Sprite& sp = obj->add_component<Sprite>();
+            getRenderer()->loadSprite("../assets/smile.png", sp);
+        }
+
+
+        m_session = session;
+        m_session->setGameplayManager(m_manager);
+        m_session->start_session();
+    }
+}
+
 void Scene::update(long long dt) {
     m_renderer->begin();
 
-	auto& children = m_registry.get_pool<Transform>();
+    // Update gameplay logic
+    if (m_session) {
+        m_input->update();
+        m_session->update(m_input->getInputs());
+        auto& gs = m_manager->getGameState();
 
+        auto& players = m_registry.get_pool<Player>();
+        for (int i = 0; i < players.size(); i++) {
+            get(players[i].get_ent())->get<Transform>().position = gs.players[i];
+        }
+    }
+
+    // Render Sprites
+	auto& children = m_registry.get_pool<Sprite>();
     for (auto i : children) {
-        m_renderer->drawQuad(i.position);
+        m_renderer->drawSprite(get(i.get_ent())->get<Transform>(), i);
     }
 
     m_renderer->end();

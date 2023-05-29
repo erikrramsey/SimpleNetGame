@@ -1,5 +1,8 @@
 #include "RendererOpenGL.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 namespace sng {
 
 
@@ -58,13 +61,12 @@ RendererOpenGL::RendererOpenGL(GLFWwindow* window) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-
     glBindVertexArray(0);
-    
+
     transLoc = glGetUniformLocation(shaderProgram, "transform");
     projLoc = glGetUniformLocation(shaderProgram, "projection");
 
@@ -72,23 +74,60 @@ RendererOpenGL::RendererOpenGL(GLFWwindow* window) {
 }
 
 void RendererOpenGL::begin() {
-    glClear(GL_COLOR_BUFFER_BIT);
+    const glm::vec2 resolution = { 1920.0f, 1080.0f };
     glUseProgram(shaderProgram);
-    glBindVertexArray(VAO);
-    
+    glClear(GL_COLOR_BUFFER_BIT);
+    glm::mat4 ortho = glm::ortho(0.0f, resolution.x, resolution.y, 0.0f, -1.0f, 1.0f);
+    glUniformMatrix4fv(projLoc, 1, false, glm::value_ptr(ortho));
 }
 
 void RendererOpenGL::drawQuad(glm::vec2& pos) {
-    glm::mat4 ortho = glm::ortho(0.0f, 640.0f, 0.0f, 480.0f, -1.0f, 1.0f);
     auto transform = glm::translate(glm::mat4(1.0f), glm::vec3(pos.x, pos.y, 0.0f));
     glUniformMatrix4fv(transLoc, 1, false, glm::value_ptr(transform));
-    glUniformMatrix4fv(projLoc, 1, false, glm::value_ptr(ortho));
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
-void RendererOpenGL::end() {
-    glUseProgram(0);
+void RendererOpenGL::loadSprite(const std::string &filename, Sprite &sprite) {
+    int n = 0;
+
+    GLuint texture;
+    glGenTextures(1, &texture);
+    sprite.texture = texture;
+    glBindTexture(GL_TEXTURE_2D, sprite.texture);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    unsigned char* data = stbi_load(filename.c_str(), &sprite.width, &sprite.height, &n, 4);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, sprite.width, sprite.height, 0,  GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    stbi_image_free(data);
+}
+
+void RendererOpenGL::drawSprite(Transform& trans, Sprite& sprite) {
+    auto transform = glm::translate(glm::mat4(1.0f), glm::vec3(trans.position, 0.0f));
+    transform = glm::scale(transform, glm::vec3(sprite.width, sprite.height, 1.0f));
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, sprite.texture);
+
+    glUniformMatrix4fv(transLoc, 1, false, glm::value_ptr(transform));
+
+    glBindVertexArray(VAO);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
+}
+
+void RendererOpenGL::end() {
+    GLenum err = glGetError();
+    if (err != GL_NO_ERROR) {
+        std::cerr << "OpenGL error: " << err << std::endl;
+    }
+    //glUseProgram(0);
+    //glBindVertexArray(0);
 }
 
 void RendererOpenGL::setClearColor(const glm::vec4 &color) {
