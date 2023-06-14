@@ -6,27 +6,29 @@
 #include "NetworkSession.h"
 #include "ggponet.h"
 
+#include "Scene.h"
 #include "SessionState.h"
-#include "GameplayManager.h"
 
 namespace sng {
 
-class GameplayManager;
+class Scene;
 
 class NetworkSessionGGPO : public NetworkSession {
 public:
 	void add_player(const char* ip, const int port) override;
 	void start_session() override;
-	void update(char input) override;
+	void update(int input) override;
+    void startSyncTest();
 
 	SessionState* getSessionState() { return &state; }
-	void setGameplayManager(GameplayManager* gp);
+	void setScene(Scene* scene);
+
 
 	NetworkSessionGGPO();
 
 private:
 	static SessionState state;
-	static GameplayManager* m_gameplay;
+	static Scene* m_scene;
 
 	// Callbacks
 	static bool begin_game_cb(const char* game);

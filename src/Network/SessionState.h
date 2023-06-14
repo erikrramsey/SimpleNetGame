@@ -14,7 +14,6 @@ struct SessionState {
 	unsigned int numPlayers;
 	int localPort;
 	int localPlayer;
-
 };
 }
 

@@ -9,13 +9,12 @@ namespace sng {
 struct Component {
 public:
 	Component(Entity self) {
-		m_self = self;
+		ent = self;
 	}
 
-	Entity get_ent() { return m_self; }
-
+	Entity get_ent() { return ent; }
+    Entity ent;
 private:
-	Entity m_self;
 };
 
 }

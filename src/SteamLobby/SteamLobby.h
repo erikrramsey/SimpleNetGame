@@ -6,7 +6,6 @@
 #include "steam/steamclientpublic.h"
 
 #include "Application.h"
-#include "TestScene.h"
 #include "AddressFinder.h"
 #include "NetworkSessionGGPO.h"
 

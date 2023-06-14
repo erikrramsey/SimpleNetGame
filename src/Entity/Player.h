@@ -5,10 +5,17 @@
 
 namespace sng {
 
+enum PlayerState {
+    INVALID = 0,
+    Grounded = 1,
+    Falling = 2,
+};
+
 class Player : public Component {
 public:
     Player(Entity self) : Component(self) {}
     int playerHandle = 0;
+    PlayerState state = INVALID;
 };
 
 }

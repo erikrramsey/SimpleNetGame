@@ -71,20 +71,27 @@ RendererOpenGL::RendererOpenGL(GLFWwindow* window) {
     projLoc = glGetUniformLocation(shaderProgram, "projection");
 
 	glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
+
+    stbi_set_flip_vertically_on_load(true);
 }
 
 void RendererOpenGL::begin() {
-    const glm::vec2 resolution = { 1920.0f, 1080.0f };
+    const glm::vec2 resolution = { 16.0f, 9.0f };
     glUseProgram(shaderProgram);
     glClear(GL_COLOR_BUFFER_BIT);
-    glm::mat4 ortho = glm::ortho(0.0f, resolution.x, resolution.y, 0.0f, -1.0f, 1.0f);
+    glm::mat4 ortho = glm::ortho(0.0f, resolution.x, 0.0f, resolution.y, -1.0f, 1.0f);
     glUniformMatrix4fv(projLoc, 1, false, glm::value_ptr(ortho));
+
+    glBindVertexArray(VAO);
 }
 
-void RendererOpenGL::drawQuad(glm::vec2& pos) {
-    auto transform = glm::translate(glm::mat4(1.0f), glm::vec3(pos.x, pos.y, 0.0f));
-    glUniformMatrix4fv(transLoc, 1, false, glm::value_ptr(transform));
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+void RendererOpenGL::end() {
+    GLenum err = glGetError();
+    if (err != GL_NO_ERROR) {
+        std::cerr << "OpenGL error: " << err << std::endl;
+    }
+    //glUseProgram(0);
+    //glBindVertexArray(0);
 }
 
 void RendererOpenGL::loadSprite(const std::string &filename, Sprite &sprite) {
@@ -107,31 +114,35 @@ void RendererOpenGL::loadSprite(const std::string &filename, Sprite &sprite) {
     stbi_image_free(data);
 }
 
+void RendererOpenGL::drawQuad(glm::vec2& pos, glm::vec2& sca) {
+    auto transform = glm::translate(glm::mat4(1.0f), glm::vec3(pos.x, pos.y, 0.0f));
+    transform = glm::scale(transform, glm::vec3(sca.x, sca.y, 1.0f));
+    glUniformMatrix4fv(transLoc, 1, false, glm::value_ptr(transform));
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+}
+
 void RendererOpenGL::drawSprite(Transform& trans, Sprite& sprite) {
     auto transform = glm::translate(glm::mat4(1.0f), glm::vec3(trans.position, 0.0f));
-    transform = glm::scale(transform, glm::vec3(sprite.width, sprite.height, 1.0f));
+    transform = glm::scale(transform, glm::vec3(trans.scale.x, trans.scale.y, 0.0f));
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, sprite.texture);
 
     glUniformMatrix4fv(transLoc, 1, false, glm::value_ptr(transform));
 
-    glBindVertexArray(VAO);
+    //glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
-}
-
-void RendererOpenGL::end() {
-    GLenum err = glGetError();
-    if (err != GL_NO_ERROR) {
-        std::cerr << "OpenGL error: " << err << std::endl;
-    }
-    //glUseProgram(0);
     //glBindVertexArray(0);
 }
 
+
 void RendererOpenGL::setClearColor(const glm::vec4 &color) {
     glClearColor(color.x, color.y, color.z, color.w);
+}
+
+void RendererOpenGL::drawRay(glm::vec2& start, float length) {
 }
 
 void RendererOpenGL::resizeCallback(GLFWwindow* window, int width, int height) {

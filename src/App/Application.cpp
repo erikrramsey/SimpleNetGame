@@ -12,7 +12,7 @@ SteamLobby* Application::m_steamLobby;
 void Application::init(int argc, char** argv) {
 	if (!glfwInit()) throw std::exception("Problem initializing GLFW!");
 	
-	m_window = glfwCreateWindow(1920, 1080, "SimpleNetGame.exe", nullptr, nullptr);
+	m_window = glfwCreateWindow(800, 450, "SimpleNetGame.exe", nullptr, nullptr);
 	if (!m_window) throw std::exception("Problem creating GLFW window!");
 
 	glfwSetFramebufferSizeCallback(m_window, RendererOpenGL::resizeCallback);
@@ -52,10 +52,12 @@ void Application::updateLoop() {
     auto next_frame = clock::now();
 
     while (!glfwWindowShouldClose(m_window)) {
+        int delta = std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::microseconds(1000000 / targetFPS)).count();
         next_frame += std::chrono::microseconds(1000000 / targetFPS);
 
 		glfwPollEvents();
-		m_scene->update(1);
+		m_scene->update(delta);
 		m_gui->update();
 		glfwSwapBuffers(m_window);
 		SteamAPI_RunCallbacks();

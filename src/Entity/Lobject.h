@@ -26,11 +26,11 @@ public:
 	std::vector<Lobject*> get_children();
     Lobject* get_parent();
 
-	template<class T>
-	T& add_component(T& comp);
+    template<class T>
+    T& add_component();
 
 	template<class T>
-	T& add_component();
+	T& add_component(T& comp);
 
 	template<class T>
 	T& get();
@@ -49,6 +49,17 @@ private:
 };
 
 template<class T>
+T& Lobject::add_component() {
+    if (try_get<T>() != nullptr) {
+        std::cout << "Object already has component" << std::endl;
+        return get<T>();
+    }
+    T comp(m_entity);
+    get_reg().emplace(m_entity, comp);
+    return get<T>();
+}
+
+template<class T>
 T& Lobject::add_component(T& comp) {
 	if (try_get<T>() != nullptr) {
 		std::cout << "Object already has component" << std::endl;
@@ -58,16 +69,6 @@ T& Lobject::add_component(T& comp) {
 	return get<T>();
 }
 
-template<class T>
-T& Lobject::add_component() {
-	if (try_get<T>() != nullptr) {
-		std::cout << "Object already has component" << std::endl;
-		return get<T>();
-	}
-	T comp(m_entity);
-	get_reg().emplace(m_entity, comp);
-	return get<T>();
-}
 
 template<class T>
 T& Lobject::get() {

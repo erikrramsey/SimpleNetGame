@@ -52,6 +52,58 @@ void DebugGui::update() {
 		m_lobby->SetData("GameStart", "true");
 	}
 
+    auto& scene = Application::GetCurrentScene();
+    if (ImGui::Button("Start Solo")) {
+        scene.startOfflineSession();
+    }
+
+    if (ImGui::Button("Start Synctest")) {
+       scene.startSyncTest(new NetworkSessionGGPO());
+    }
+
+    static NetworkSessionGGPO* ggpo = nullptr;
+    if (ImGui::Button("Create local ggpo session")) {
+        ggpo = new NetworkSessionGGPO();
+    }
+
+    if (ggpo) {
+        static bool enabled[4];
+        static bool self[4];
+
+        for (int i = 0; i < 4; i++) {
+            ImGui::PushID(i);
+
+            ImGui::Text("700%d", i);
+            ImGui::SameLine();
+            ImGui::Checkbox("Self", &self[i]);
+            ImGui::SameLine();
+            ImGui::Checkbox("Enabled", &enabled[i]);
+
+            ImGui::PopID();
+            if (!enabled[i]) break;
+        }
+
+
+        if (ImGui::Button("Begin")) {
+            for (int i = 0; i < 4; i++) {
+                if (!enabled[i]) break;
+
+                if (self[i])
+                    ggpo->add_player("local", 7000 + i);
+                else
+                    ggpo->add_player("127.0.0.1", 7000 + i);
+            }
+
+            scene.startOnlineSession(ggpo);
+        }
+    }
+
+    auto& ss = scene.getSharedState();
+
+    auto& v0 = ss.position[0];
+    ImGui::Text("%f %f", v0.x, v0.y);
+
+
 	static bool shouldPrintMemberData = true;
 	ImGui::Checkbox("Print lobby member data", &shouldPrintMemberData);
 	if (shouldPrintMemberData)
@@ -69,6 +121,8 @@ void DebugGui::update() {
 	int display_w, display_h;
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
+
+// Steam Lobby ////////////////////////////////////////////////////////////////
 
 void DebugGui::PrintLobbyData() {
 	const int bufferSize = 200;
@@ -100,9 +154,15 @@ void DebugGui::PrintMemberData() {
 		ImGui::Text("Local IP: ");
 		ImGui::SameLine();
 		ImGui::Text(m_lobby->GetUserData(id, "LocalIP"));
-		ImGui::Separator();
+        ImGui::Text("Port: ");
+        ImGui::SameLine();
+        ImGui::Text(m_lobby->GetUserData(id, "Port"));
+        ImGui::Separator();
 	}
 }
+
+
+// Lobjects ///////////////////////////////////////////////////////////////////
 
 void DebugGui::sceneView() {
     ImGui::Begin("Scene");
@@ -150,6 +210,8 @@ void DebugGui::displayLobject(Lobject* obj) {
         ImGui::TreePop();
     }
 }
+
+// Components /////////////////////////////////////////////////////////////////
 
 void DebugGui::componentWindow() {
     if (!m_selected) return;
