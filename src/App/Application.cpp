@@ -47,6 +47,7 @@ void Application::shutdown() {
 
 void Application::updateLoop() {
     const int targetFPS = 60;
+    unsigned short ticks = 0;
 
     using clock = std::chrono::steady_clock;
     auto next_frame = clock::now();
@@ -60,7 +61,13 @@ void Application::updateLoop() {
 		m_scene->update(delta);
 		m_gui->update();
 		glfwSwapBuffers(m_window);
-		SteamAPI_RunCallbacks();
+
+        /*
+        if (!(ticks % 10))
+            SteamAPI_RunCallbacks();
+
+        ticks++;
+         */
 
         std::this_thread::sleep_until(next_frame);
 	}

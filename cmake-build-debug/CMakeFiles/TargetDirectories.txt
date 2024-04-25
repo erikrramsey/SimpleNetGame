@@ -1,0 +1,3 @@
+C:/Dev/SimpleNetGame/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Dev/SimpleNetGame/cmake-build-debug/CMakeFiles/SimpleNetGame.dir
+C:/Dev/SimpleNetGame/cmake-build-debug/CMakeFiles/rebuild_cache.dir

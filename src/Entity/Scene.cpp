@@ -66,6 +66,26 @@ void Scene::startOnlineSession(NetworkSessionGGPO *session) {
 
         {
             auto obj = create_Lobject();
+            obj->get<Transform>().position = {0.0f, 8.0f};
+            obj->get<Transform>().scale = {16.0f, 0.2f};
+            auto &body = obj->add_component<StaticBody>();
+            body.aabb = {16.0f, 0.2f};
+            body.dir = {0.0f, -1.0f};
+            obj->add_component<Sprite>();
+        }
+
+        {
+            auto obj = create_Lobject();
+            obj->get<Transform>().position = {4.0f, 4.0f};
+            obj->get<Transform>().scale = {8.0f, 0.2f};
+            auto &body = obj->add_component<StaticBody>();
+            body.aabb = {8.0f, 0.2f};
+            body.dir = {0.0f, -1.0f};
+            obj->add_component<Sprite>();
+        }
+
+        {
+            auto obj = create_Lobject();
             obj->get<Transform>().position = {0.0f, 0.2f};
             obj->get<Transform>().scale = {0.2f, 9.0f};
             auto &body = obj->add_component<StaticBody>();
@@ -74,7 +94,7 @@ void Scene::startOnlineSession(NetworkSessionGGPO *session) {
             obj->add_component<Sprite>();
         }
 
-        for (int i = 0; i < 200; i++) {
+        {
             auto obj = create_Lobject();
             obj->get<Transform>().position = {15.8f, 0.2f};
             obj->get<Transform>().scale = {0.2f, 9.0f};

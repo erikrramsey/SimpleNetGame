@@ -30,9 +30,25 @@ void Physics::update(sng::ECRegistry& registry, float timeStep) {
         for (auto& cbody : ground) {
             if (cbody.ent == body.ent) continue;
             auto& ct = registry.get<Transform>(cbody.ent);
-            while (overlap(t.position, body.aabb, ct.position, cbody.aabb)) {
+            if (overlap(t.position, body.aabb, ct.position, cbody.aabb)) {
                 body.velocity *= glm::vec2(cbody.dir.y * cbody.dir.y, cbody.dir.x * cbody.dir.x);
-                t.position += cbody.dir * 0.01f;
+                if (cbody.dir.x != 0.0f) {
+                    float adjustment = 0.0f;
+                    if (cbody.dir.x > 0.0f)
+                        adjustment = ct.position.x + cbody.aabb.x;
+                    else
+                        adjustment = ct.position.x - body.aabb.x;
+                    t.position = glm::vec2(adjustment, t.position.y);
+                }
+
+                if (cbody.dir.y != 0.0f) {
+                    float adjustment = 0.0f;
+                    if (cbody.dir.y > 0.0f)
+                         adjustment = ct.position.y + cbody.aabb.y;
+                    else
+                        adjustment = ct.position.y - body.aabb.y;
+                    t.position = glm::vec2(t.position.x, adjustment);
+                }
             }
         }
     }
